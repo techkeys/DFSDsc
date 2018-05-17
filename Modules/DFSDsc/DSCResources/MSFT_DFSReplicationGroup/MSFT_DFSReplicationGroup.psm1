@@ -317,7 +317,7 @@ function Set-TargetResource
         } # foreach
 
         # Get the existing folders of this DFS Rep Group
-        $existingFolders = (Get-DfsReplicatedFolder @replicationGroupParameters -ErrorAction Stop).FolderName
+        $existingFolders = @((Get-DfsReplicatedFolder @replicationGroupParameters -ErrorAction Stop).FolderName) -replace "^$", "null"
 
         # Add any missing folders
         foreach ($folder in $Folders)
@@ -625,7 +625,7 @@ function Test-TargetResource
             $replicationGroupParameters.Remove('ComputerName')
 
             # Compare the Members
-            $existingMembers = @((Get-DfsrMember @replicationGroupParameters -ErrorAction Stop).DnsName)
+            $existingMembers = @((Get-DfsrMember @replicationGroupParameters -ErrorAction Stop).DnsName) -replace "^$", "null"
             if ((Compare-Object `
                 -ReferenceObject $fqdnMembers `
                 -DifferenceObject $existingMembers).Count -ne 0)
@@ -641,7 +641,7 @@ function Test-TargetResource
             } # if
 
             # Compare the Folders
-            $existingFolders = @((Get-DfsReplicatedFolder @replicationGroupParameters -ErrorAction Stop).FolderName)
+            $existingFolders = @((Get-DfsReplicatedFolder @replicationGroupParameters -ErrorAction Stop).FolderName) -replace "^$", "null"
 
             if ((Compare-Object `
                 -ReferenceObject $Folders `
